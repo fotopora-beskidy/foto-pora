@@ -250,12 +250,13 @@ function renderWeather(){
  const isToday=currentDay===0;
 
  const temp=isToday ? data.current.temperature_2m : data.daily.temperature_2m_max[1];
- const cloud=isToday ? data.current.cloud_cover : "—";
+const srIdx=(!isToday && data.hourly && data.hourly.time && data.daily && data.daily.sunrise && data.daily.sunrise[1]) ? data.hourly.time.indexOf(data.daily.sunrise[1].slice(0,13)+":00") : -1;
+const cloud=isToday ? data.current.cloud_cover : (srIdx!==-1 && data.hourly.cloud_cover ? Math.round(data.hourly.cloud_cover[srIdx]) : null);
  const wind=isToday ? data.current.wind_speed_10m : data.daily.wind_speed_10m_max[1];
  const rain=isToday ? data.current.precipitation : data.daily.precipitation_sum[1];
 
  $("temp").textContent=(isToday?"":"maks. ")+Math.round(temp)+"°C";
- $("cloud").textContent=isToday?(cloud+"%"):"prognoza";
+ $("cloud").textContent=(cloud!==null && cloud!==undefined)?(cloud+"%"):"—";
  $("wind").textContent=(isToday?"":"maks. ")+Math.round(wind)+" km/h";
  $("rain").textContent=rain+" mm";
   $("alt").textContent=Math.round(data.elevation)+" m n.p.m.";
